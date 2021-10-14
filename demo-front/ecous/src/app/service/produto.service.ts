@@ -10,6 +10,14 @@ import { Usuario } from '../model/Usuario';
 })
 export class ProdutoService {
 
+  endereco = environment.server + environment.port;
+
+  autorizacao = {
+    //headers: new HttpHeaders().set('Authorization', environment.token)
+    headers: new HttpHeaders().set('Authorization', localStorage.getItem('token') || '')
+
+  }
+
   constructor(
 
     private http: HttpClient
@@ -20,24 +28,59 @@ export class ProdutoService {
   }
 
   getAllProdutos(): Observable<Produto[]>{
-    return this.http.get<Produto[]>('https://projetointegradorg1.herokuapp.com/produtos', this.token)
-  }
-
-  postProduto(produto: Produto): Observable<Produto>{
-    return this.http.post<Produto>('https://projetointegradorg1.herokuapp.com/produtos/novoproduto', produto, this.token)
+    return this.http.get<Produto[]>(`${this.endereco}/produtos`)
   }
 
   getByIdProduto(idProduto: number): Observable<Produto>{
-    return this.http.get<Produto>(`https://projetointegradorg1.herokuapp.com/produtos/idproduto/${idProduto}`, this.token)
+    return this.http.get<Produto>(`${this.endereco}/produtos/idproduto/${idProduto}`)
   }
-  putProduto(produto: Produto): Observable<Produto>{
-    return this.http.put<Produto>('https://projetointegradorg1.herokuapp.com/produtos/atualizarproduto', produto, this.token)
-  }
-  deleteProduto(idProduto: number){
-    return this.http.delete(`https://projetointegradorg1.herokuapp.com/produtos/deletarproduto/${idProduto}`, this.token)
+  
+  getByIdUser(idUsuario: number): Observable<Usuario>{
+    return this.http.get<Usuario>(`${this.endereco}/usuarios/idusuario/${idUsuario}`)
   }
 
-  getByIdUser(idUsuario: number): Observable<Usuario>{
-    return this.http.get<Usuario>(`https://projetointegradorg1.herokuapp.com/usuarios/idusuario/${idUsuario}`, this.token)
+  findAllByProdutos(): Observable<Produto[]> {
+
+    return this.http.get<Produto[]>(`${this.endereco}/produtos`);
+  }
+
+  findByIdProduto(id: number): Observable<Produto> {
+
+    return this.http.get<Produto>(`${this.endereco}/produtos/${id}`);
+  }
+
+  findAllByNomeProdutos(nome: string): Observable<Produto[]> {
+
+    return this.http.get<Produto[]>(`${this.endereco}/produtos/nome/${nome}`);
+  }
+
+  postProduto(produto: Produto): Observable<Produto> {
+
+    return this.http.post<Produto>(`${this.endereco}/produtos/novoproduto`, produto);
+  }
+
+  putProduto(produto: Produto): Observable<Produto> {
+
+    return this.http.put<Produto>(`${this.endereco}/produtos/atualizarproduto`, produto);
+  }
+
+  compraProduto(idProduto: number, idPedido: number): Observable<Produto> {
+
+    return this.http.put<Produto>(`${this.endereco}/produtos/produto_pedido/produtos/${idProduto}/pedidos/${idPedido}`, this.autorizacao);
+  }
+
+  adicionaItemListaDeDesejos(idProduto: number, idListaDeDesejo: number): Observable<Produto[]> {
+
+    return this.http.put<Produto[]>(`${this.endereco}/produtos/produto_lista/produtos/${idProduto}/listaDesejos/${idListaDeDesejo}`, this.autorizacao);
+  }
+
+  adicionaItemCarrinho(idProduto: number, idPedido: number): Observable<Produto[]> {
+
+    return this.http.put<Produto[]>(`${this.endereco}/produtos/produto_pedido/produtos/${idProduto}/pedidos/${idPedido}`, this.autorizacao);
+  }
+
+  deleteProduto(idProduto: number): Observable<Produto> {
+
+    return this.http.delete<Produto>(`${this.endereco}/produtos/deletarproduto/${idProduto}`);
   }
 }

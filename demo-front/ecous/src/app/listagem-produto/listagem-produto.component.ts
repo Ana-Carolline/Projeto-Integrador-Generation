@@ -9,12 +9,11 @@ import { CategoriaService } from '../service/categoria.service';
 import { ProdutoService } from '../service/produto.service';
 
 @Component({
-  selector: 'app-back-end',
-  templateUrl: './back-end.component.html',
-  styleUrls: ['./back-end.component.css']
+  selector: 'app-listagem-produto',
+  templateUrl: './listagem-produto.component.html',
+  styleUrls: ['./listagem-produto.component.css']
 })
-export class BackEndComponent implements OnInit {
-
+export class ListagemProdutoComponent implements OnInit {
   listaProdutos: Produto []
   produto: Produto = new Produto()
 
@@ -22,11 +21,8 @@ export class BackEndComponent implements OnInit {
   listaCategorias: Categoria []
   idCategoria: number
 
-  listaUsuarios: Usuario []
   user: Usuario = new Usuario()
   idUsuario = environment.idUsuario
-  confirmarSenha: string
-
 
   constructor(
     private router: Router, 
@@ -37,13 +33,9 @@ export class BackEndComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if(environment.token == ''){
-      this.router.navigate(['/login-backend'])
-    }
 
     this.getAllCategorias()
     this.getAllProdutos()
-    this.getAllUsuarios()
   }
 
   getAllCategorias(){
@@ -70,18 +62,12 @@ export class BackEndComponent implements OnInit {
     })
   }
 
-  getAllUsuarios(){
-    this.authService.getAllUsuarios().subscribe((resp: Usuario[]) => {
-      this.listaUsuarios = resp
-    })
-  }
-
   publicar(){
     this.categoria.idCategoria = this.idCategoria
     this.produto.categoriaRelacionada = this.categoria
 
     //this.user.idUsuario = this.idUsuario
-    // this.produto.usuarioRelacionado = this.user
+    //this.produto.usuarioRelacionado = this.user
 
     this.produtoService.postProduto(this.produto).subscribe((resp: Produto) => {
       this.produto = resp
@@ -90,35 +76,9 @@ export class BackEndComponent implements OnInit {
       this.getAllProdutos()
     })
   }
-
-  cadastrarCat(){
-    this.categoriaService.postCategoria(this.categoria).subscribe((resp: Categoria)=>{
+  listagemCategoria(id: number){
+    this.categoriaService.getByIdCategoria(id).subscribe((resp: Categoria)=>{
       this.categoria = resp
-      alert('Categoria cadastrado com sucesso!')
-      this.getAllCategorias()
-      this.categoria = new Categoria()
     })
   }
-
-  confirmSenha(event: any) {
-    this.confirmarSenha = event.target.value
-  }
-  cadastrar() {
-    console.log("user"+JSON.stringify(this.user))
-    console.log("confirmarSenha"+ this.confirmarSenha)
- 
-    if (this.user.senha != this.confirmarSenha) {
-      alert('As senhas estão incorretas.')
-    }
-    else {
-      this.authService.cadastrar(this.user).subscribe((resp: Usuario) =>{
-        this.user = resp 
-        this.router.navigate(['/backend'])
-        alert('Usuário cadastrado com sucesso')
-        this.getAllUsuarios()
-      })
-
-    }
-  }
-
 }

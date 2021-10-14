@@ -9,6 +9,8 @@ import { Categoria } from '../model/Categoria';
 })
 export class CategoriaService {
 
+  endereco = environment.server + environment.port;
+
   constructor(
 
     private http: HttpClient
@@ -19,23 +21,23 @@ export class CategoriaService {
   }
 
   getAllCategoria(): Observable<Categoria[]>{
-    return this.http.get<Categoria[]>('https://projetointegradorg1.herokuapp.com/categorias', this.token)
+    return this.http.get<Categoria[]>(`${this.endereco}/categorias`)
   }
 
   getByIdCategoria(id: number): Observable<Categoria>{
-    return this.http.get<Categoria>(`https://projetointegradorg1.herokuapp.com/categorias/id/${id}`, this.token)
+    return this.http.get<Categoria>(`${this.endereco}/categorias/id/${id}`)
   }
 
   postCategoria(categoria: Categoria): Observable<Categoria>{
-    return this.http.post<Categoria>('https://projetointegradorg1.herokuapp.com/categorias/novacategoria', categoria, this.token)
+    return this.http.post<Categoria>(`${this.endereco}/categorias/novacategoria`, categoria)
 
   }
 
   putCategoria(categoria: Categoria): Observable<Categoria>{
-    return this.http.put<Categoria>('https://projetointegradorg1.herokuapp.com/categorias/atualizarcategoria', categoria, this.token)
+    return this.http.put<Categoria>(`${this.endereco}/categorias/atualizarcategoria`, categoria)
   }
 
   deleteCategoria(id: number) {
-    return this.http.delete(`https://projetointegradorg1.herokuapp.com/categorias/deletar/${id}`, this.token)
+    return this.http.delete(`${this.endereco}/categorias/deletar/${id}`)
   }
 }
